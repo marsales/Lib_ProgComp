@@ -1,4 +1,3 @@
-// bfs.hpp
 #pragma once
 #include <vector>
 #include <queue>
