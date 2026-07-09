@@ -1,12 +1,9 @@
 // KNAPSACK
-/*
-Problema: Dada uma mochila com capacidade W e n itens, cada um com
-peso w[i] e valor v[i], qual o maior valor que dá pra colocar na mochila
-sem passar do peso?
+// Dada uma mochila com capacidade W 
+// e n itens, cada um com peso w[i] e valor v[i]
+// Qual o maior valor que dá pra colocar na mochila sem passar do peso?
 
-dp[w] -> melhor valor com capacidade w
-*/
-
+// dp[w] -> melhor valor com capacidade w
 int n, W;
 vector<int> w, v;
 
@@ -19,3 +16,21 @@ for (int i = 0; i < n; ++i) {
 }
 
 cout << dp[W] << endl;
+
+// UNBOUNDED KNAPSACK
+// Cada item pode ser usado quantas vezes quiser
+// Complexidade: O(nW)
+
+long long unbounded_knapsack(const vector<int>& weight, const vector<int>& value, int W) {
+    int n = weight.size();
+
+    vector<long long> dp(W + 1, 0);
+
+    for (int i = 0; i < n; i++) {
+        for (int cap = weight[i]; cap <= W; cap++) {
+            dp[cap] = max(dp[cap], dp[cap - weight[i]] + value[i]);
+        }
+    }
+
+    return dp[W];
+}
