@@ -34,3 +34,27 @@ long long unbounded_knapsack(const vector<int>& weight, const vector<int>& value
 
     return dp[W];
 }
+
+// 0/1 EXACT KNAPSACK
+// Retorna maior valor para peso exatamente W
+// Se for impossível, retorna -1
+// Complexidade: O(nW)
+
+long long knapsack01_exact(const vector<int>& weight, const vector<int>& value, int W) {
+    const long long NEG = -4e18;
+
+    int n = weight.size();
+
+    vector<long long> dp(W + 1, NEG);
+    dp[0] = 0;
+
+    for (int i = 0; i < n; i++) {
+        for (int cap = W; cap >= weight[i]; cap--) {
+            if (dp[cap - weight[i]] != NEG) {
+                dp[cap] = max(dp[cap], dp[cap - weight[i]] + value[i]);
+            }
+        }
+    }
+
+    return dp[W] == NEG ? -1 : dp[W];
+}
