@@ -18,8 +18,5 @@ int main() {
     ios::sync_with_stdio(false);cin.tie(nullptr);
     cout << setprecision(10) << fixed;
     
-    char a = '1';
-    cout << a;
-    
     return 0;
 }
