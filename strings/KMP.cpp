@@ -1,30 +1,73 @@
-// KMP
-// Encontrar as ocorrências de uma string P numa string T
+// KMP - KNUTH-MORRIS-PRATT
 
-// Time: O(n + m)
+// failure[i] = length of the longest proper prefix of pattern[0..i]
+//              that is also a suffix
+vector<int> kmpPreprocess(const string& pattern) {
+    int m = (int)pattern.size();
 
-const int MAX_N;
-string T, P;    // T = text, P = pattern
-int n, m;       // n = |T|, m = |P|
-vi b;           // b = back table
+    vector<int> failure(m);
+    int j = 0;
 
-void kmpPreprocess() { 
-    int i = 0, j = -1; b[0] = -1;
-    while (i < m) { // pre-process P
-        while ((j >= 0) && (P[i] != P[j])) j = b[j]; 
-        ++i; ++j; 
-        b[i] = j;
+    for (int i = 1; i < m; i++) {
+        while (j > 0 && pattern[i] != pattern[j])
+            j = failure[j - 1];
+
+        if (pattern[i] == pattern[j])
+            j++;
+
+        failure[i] = j;
     }
+
+    return failure;
 }
 
-void kmpSearch() { 
-    int i = 0, j = 0; 
-    while (i < n) { 
-        while ((j >= 0) && (T[i] != P[j])) j = b[j];
-        ++i; ++j;
-        if (j == m) {
-            printf("P is found at index %d in T\n", i-j);
-            j = b[j];
+// Returns every occurrence, including overlapping ones
+// Time: O(|text| + |pattern|)
+// Memory: O(|pattern|)
+vector<int> kmpSearch(const string& text, const string& pattern) {
+    vector<int> occurrences;
+
+    if (pattern.empty())
+        return occurrences;
+
+    vector<int> failure = kmpPreprocess(pattern);
+    int j = 0;
+
+    for (int i = 0; i < (int)text.size(); i++) {
+        while (j > 0 && text[i] != pattern[j])
+            j = failure[j - 1];
+
+        if (text[i] == pattern[j])
+            j++;
+
+        if (j == (int)pattern.size()) {
+            occurrences.push_back(i - (int)pattern.size() + 1);
+            j = failure[j - 1];
         }
     }
+
+    return occurrences;
+}
+
+// Returns the first occurrence, or -1 if it does not exist.
+// Time: O(|text| + |pattern|)
+int kmpFind(const string& text, const string& pattern) {
+    if (pattern.empty())
+        return 0;
+
+    vector<int> failure = kmpPreprocess(pattern);
+    int j = 0;
+
+    for (int i = 0; i < (int)text.size(); i++) {
+        while (j > 0 && text[i] != pattern[j])
+            j = failure[j - 1];
+
+        if (text[i] == pattern[j])
+            j++;
+
+        if (j == (int)pattern.size())
+            return i - (int)pattern.size() + 1;
+    }
+
+    return -1;
 }
